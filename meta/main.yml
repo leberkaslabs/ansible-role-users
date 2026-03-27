@@ -1,0 +1,20 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Niclas Spreng
+  description: Manage users and groups.
+  license: MIT
+  min_ansible_version: "2.15"
+  namespace: leberkaslabs
+  role_name: users
+
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags: []

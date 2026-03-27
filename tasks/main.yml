@@ -1,0 +1,21 @@
+# yamllint disable rule:quoted-strings
+---
+- name: Setup groups
+  when: >
+    users_groups is defined and
+    users_groups is iterable and
+    users_groups is not none
+  ansible.builtin.include_tasks: group.yml
+  loop: "{{ users_groups }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Setup users
+  when: >
+    users is defined and
+    users is iterable and
+    users is not none
+  ansible.builtin.include_tasks: user.yml
+  loop: "{{ users }}"
+  loop_control:
+    label: "{{ item.name }}"
