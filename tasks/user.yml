@@ -27,7 +27,7 @@
     group: root
     mode: "0640"
     validate: "{{ sudo_validation_command | default(omit, true) }}"
-  when: item.sudo_config is defined and item.sudo_config | length
+  when: item.sudo_config is defined and item.sudo_config | length > 0
 
 # yamllint disable-line rule:quoted-strings
 - name: "Remove sudo for {{ item.name }}"
@@ -44,7 +44,7 @@
     group: "{{ item.name }}"
     state: directory
     mode: "0700"
-  when: item.ssh_key is defined and item.ssh_key | length
+  when: item.ssh_key is defined and item.ssh_key | length > 0
 
 # yamllint disable-line rule:quoted-strings
 - name: "Setup authorized keys for {{ item.name }}"
@@ -53,4 +53,4 @@
     key: "{{ item.ssh_key }}"
     exclusive: true
     state: present
-  when: item.ssh_key is defined and item.ssh_key | length
+  when: item.ssh_key is defined and item.ssh_key | length > 0
