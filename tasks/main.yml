@@ -1,21 +1,26 @@
-# yamllint disable rule:quoted-strings
 ---
+# visudo commonly lives in /usr/sbin, which non-interactive/non-login shells
+# (used by Ansible to execute commands) may not have on their PATH. Resolve
+# the full path on the target host so `validate` below doesn't silently rely
+# on PATH, and fall back to omitting validation entirely if visudo is missing.
+- name: Discover the full path to visudo on the target host
+  ansible.builtin.shell: command -v visudo || true
+  register: users_sudo_visudo_path
+  changed_when: false
+
+- name: Parse the visudo validation path (if exists)
+  ansible.builtin.set_fact:
+    users_sudo_validation_command: >-
+      {{ (users_sudo_visudo_path.stdout | trim ~ ' -cf %s') if (users_sudo_visudo_path.stdout | trim | length > 0) else '' }}
+
 - name: Setup groups
-  when: >
-    users_groups is defined and
-    users_groups is iterable and
-    users_groups is not none
   ansible.builtin.include_tasks: group.yml
   loop: "{{ users_groups }}"
   loop_control:
-    label: "{{ item.name }}"
+    label: "{{ item.name | default(None) }}"
 
 - name: Setup users
-  when: >
-    users is defined and
-    users is iterable and
-    users is not none
   ansible.builtin.include_tasks: user.yml
   loop: "{{ users }}"
   loop_control:
-    label: "{{ item.name }}"
+    label: "{{ item.name | default(None) }}"
